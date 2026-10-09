@@ -12,4 +12,9 @@ describe('Weighted Average monthly prices in INR', () => {
     expect(ai?.features.join(' ')).not.toContain('Weighted Average Business');
     expect(plans.filter(p => p.price === 99)).toHaveLength(2);
   });
+  it('only links plans to Zoho Billing hosted checkout pages over https', () => {
+    for (const plan of plans) {
+      if (plan.checkoutUrl) expect(plan.checkoutUrl).toMatch(/^https:\/\/(billing|subscriptions)\.(zoho|zohosecure)\.(in|com)\//);
+    }
+  });
 });
