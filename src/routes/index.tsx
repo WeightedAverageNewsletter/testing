@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { newsletters, plans } from "@/lib/newsletters";
 import heroImage from "@/assets/awkward_meeting_hero.jpg";
-import logoAsset from "@/assets/weighted_average_logo.png.asset.json";
+// Logo is served from /public so it works on any host (the old Lovable-only asset link broke on Vercel).
+const logoUrl = "/favicon.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Brand() {
-  return <a href="#" className="brand" aria-label="Weighted Average home"><img src={logoAsset.url} width={400} height={400} className="brand-icon" alt="" /><span>Weighted Average<span className="text-primary">.</span></span></a>;
+  return <a href="#" className="brand" aria-label="Weighted Average home"><img src={logoUrl} width={400} height={400} className="brand-icon" alt="" /><span>Weighted Average<span className="text-primary">.</span></span></a>;
 }
 
 const meetingLines = [
@@ -89,7 +90,7 @@ function Index() {
         <section id="the-name" className="site-wrap section">
           <div className="name-plate">
             <div className="name-formula">
-              <div className="formula-top"><img src={logoAsset.url} width={400} height={400} className="formula-mark" alt="" /><span className="formula-eq">=</span><span className="formula-frac"><span className="formula-num">Σ (weight × take)</span><span className="formula-den">Σ weight</span></span></div>
+              <div className="formula-top"><img src={logoUrl} width={400} height={400} className="formula-mark" alt="" /><span className="formula-eq">=</span><span className="formula-frac"><span className="formula-num">Σ (weight × take)</span><span className="formula-den">Σ weight</span></span></div>
               <div className="weight-rows">
                 <div className="weight-row"><span className="weight-label">Read the actual filing</span><span className="weight-track"><span className="weight-fill" style={{width:'88%'}} /></span><span className="weight-num">0.9</span></div>
                 <div className="weight-row"><span className="weight-label">Saw the headline</span><span className="weight-track"><span className="weight-fill" style={{width:'32%'}} /></span><span className="weight-num">0.3</span></div>
