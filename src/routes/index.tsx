@@ -9,9 +9,9 @@ import logoAsset from "@/assets/weighted_average_logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "Weighted Average — Cut through the noise" },
+    { title: "Weighted Average — Morning newsletters on markets, business & AI" },
     { name: "description", content: "Three stories. A sharper perspective. Morning newsletters for Indian professionals on markets, business and AI. Plans from ₹99 a month." },
-    { property: "og:title", content: "Weighted Average — Cut through the noise" },
+    { property: "og:title", content: "Weighted Average — Morning newsletters on markets, business & AI" },
     { property: "og:description", content: "Know what happened, what it means, and what to say. Explore our Indian markets, business and AI newsletters." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
@@ -51,7 +51,7 @@ function Index() {
           <a href="#newsletters">The newsletters</a>
           <a href="#how-it-works">How it works</a>
           <a href="#pricing">Pricing</a>
-          <Button variant="editorial" size="default" asChild><a href="#pricing">Get in the know <ArrowUpRight /></a></Button>
+          <Button variant="editorial" size="default" className="nav-cta" asChild><a href="#pricing">Subscribe <ArrowUpRight /></a></Button>
         </nav>
       </header>
 
@@ -59,13 +59,13 @@ function Index() {
         <section className="hero" aria-labelledby="hero-heading">
           <img src={heroImage} width={1536} height={1024} className="hero-art" alt="Playful clay characters in an awkward office meeting: a surprised team and one confident colleague in a lime suit" fetchPriority="high" />
           <div className="site-wrap hero-inner">
-            <div className="eyebrow"><span className="status-dot" /> YOUR INBOX’S MOST INTERESTING PERSON</div>
+            <div className="eyebrow"><span className="status-dot" /> <span>THREE MORNING NEWSLETTERS<span className="hidden sm:inline">&nbsp;· MARKETS, BUSINESS, AI</span></span></div>
             <h1 id="hero-heading"><span>Weighted</span><span>Average<span className="!inline text-primary">.</span></span></h1>
             <p className="hero-tagline">Cut through the noise. Have a take.</p>
-            <p className="hero-description">Boss drops “FII outflows” into the meeting.<br className="hidden md:block" /> The room goes on mute. Not you.<br /><span className="hero-pitch">Three stories on markets, business & AI. The context. The comeback. In your inbox.</span></p>
+            <p className="hero-description">Boss drops “FII outflows” into the meeting.<br className="hidden md:block" /> The room goes on mute. Not you.<br /><span className="hero-pitch">Most newsletters tell you what happened. We tell you what to do with it.</span></p>
             <div className="hero-actions">
-              <Button variant="editorial" size="lg" asChild><a href="#pricing">Give me the context <ArrowUpRight /></a></Button>
-              <Button variant="editorialOutline" size="lg" onClick={() => setSample('Markets')}>Take a peek <ArrowRight /></Button>
+              <Button variant="editorial" size="lg" asChild><a href="#pricing">Get it in my inbox <ArrowUpRight /></a></Button>
+              <Button variant="editorialOutline" size="lg" onClick={() => setSample('Markets')}>Read a sample edition <ArrowRight /></Button>
             </div>
             <p className="reading-note"><Clock3 size={13} /> A few minutes to read. Zero strategic nodding required.</p>
           </div>
