@@ -11,4 +11,5 @@
 
 - Keep newsletter offerings in `src/lib/newsletters.ts` and test their prices there so displayed plan details share one source of truth.
 - Keep landing-page appearance in the semantic design system in `src/styles.css` and use editorial Button variants for calls to action.
-- Keep sample editions explicitly illustrative and plan selection frontend-only until an actual subscription service is connected; never imply a payment or subscription succeeded.
+- Sample editions in `src/lib/samples.ts` are real past issues, labelled "From the archive" with their date. Keep production-only parts (suggested tweets, section labels, verification notes) out of them.
+- Payment happens on Zoho Billing's hosted checkout; never imply on the site that a payment or subscription succeeded.

@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowUpRight, ArrowRight, TrendingUp, BriefcaseBusiness, Sparkles, Clock3, Check, Plus, MoveUpRight, AudioLines, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { newsletters, plans } from "@/lib/newsletters";
+import { sampleEditions, type SampleEdition } from "@/lib/samples";
+import { Brand, logoUrl } from "@/components/brand";
+import { SampleStoryBlock } from "@/components/sample-story";
 import heroImage from "@/assets/awkward_meeting_hero.jpg";
-// Logo is served from /public so it works on any host (the old Lovable-only asset link broke on Vercel).
-const logoUrl = "/favicon.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -20,9 +21,8 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function Brand() {
-  return <a href="#" className="brand" aria-label="Weighted Average home"><img src={logoUrl} width={400} height={400} className="brand-icon" alt="" /><span>Weighted Average<span className="text-primary">.</span></span></a>;
-}
+const sampleIdForTheme: Record<string, SampleEdition['id']> = { market: 'markets', business: 'business', ai: 'ai' };
+const themeForSample: Record<SampleEdition['id'], string> = { markets: 'market', business: 'business', ai: 'ai' };
 
 const meetingLines = [
   { topic: 'Markets', boss: '“So, what do we make of the FII outflows?”', before: '“Yes. The outflows. Very… flowy.”', after: '“I’d look at whether domestic buying is offsetting them. The index alone won’t tell us the whole story.”' },
@@ -41,16 +41,18 @@ function Index() {
   const [meetingTopic, setMeetingTopic] = useState(0);
   const [hasRead, setHasRead] = useState(false);
   const meeting = meetingLines[meetingTopic] ?? meetingLines[0];
-  const [sample, setSample] = useState<string | null>(null);
+  const [tasteId, setTasteId] = useState<SampleEdition['id']>('markets');
+  const taste = sampleEditions.find(edition => edition.id === tasteId) ?? sampleEditions[0];
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[number] | null>(null);
   return (
     <>
       <header className="site-wrap site-header">
         <Brand />
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#the-name">The name</a>
+          <a href="#the-name" className="nav-secondary">The name</a>
           <a href="#newsletters">The newsletters</a>
           <a href="#how-it-works">How it works</a>
+          <a href="#sample">Read a sample</a>
           <a href="#pricing">Pricing</a>
           <Button variant="editorial" size="default" className="nav-cta" asChild><a href="#pricing">Subscribe <ArrowUpRight /></a></Button>
         </nav>
@@ -66,7 +68,7 @@ function Index() {
             <p className="hero-description">Boss drops “FII outflows” into the meeting.<br className="hidden md:block" /> The room goes on mute. Not you.<br /><span className="hero-pitch">Most newsletters tell you what happened. We tell you what to do with it.</span></p>
             <div className="hero-actions">
               <Button variant="editorial" size="lg" asChild><a href="#pricing">Get it in my inbox <ArrowUpRight /></a></Button>
-              <Button variant="editorialOutline" size="lg" onClick={() => setSample('Markets')}>Read a sample edition <ArrowRight /></Button>
+              <Button variant="editorialOutline" size="lg" asChild><a href="#sample">Read a sample edition <ArrowRight /></a></Button>
             </div>
             <p className="reading-note"><Clock3 size={13} /> A few minutes to read. Zero strategic nodding required.</p>
           </div>
@@ -123,7 +125,7 @@ function Index() {
                 <p>{newsletter.description}</p>
                 <p className="mt-4 !text-[11px]">{newsletter.extra}</p>
                 <p className="schedule"><Clock3 size={13} />{newsletter.schedule}</p>
-                <Button variant="ghost" className="card-link" onClick={() => setSample(newsletter.name)}>Peek inside the edition <ArrowUpRight size={16} /></Button>
+                <Button variant="ghost" className="card-link" asChild><Link to="/sample/$id" params={{ id: sampleIdForTheme[newsletter.theme] ?? 'markets' }}>Read a past edition <ArrowUpRight size={16} /></Link></Button>
               </article>;
             })}
           </div>
@@ -151,6 +153,24 @@ function Index() {
           </div>
         </section>
 
+        {taste && <section id="sample" className="site-wrap section sample-taste" aria-labelledby="sample-title">
+          <div className="section-heading">
+            <div><div className="eyebrow">STRAIGHT FROM THE ARCHIVE.</div><h2 id="sample-title">Don’t take our word for it.<br />Read one.</h2></div>
+            <p>A real story from a past edition, exactly as subscribers got it. Pick a newsletter.</p>
+          </div>
+          <div className="taste-tabs" role="tablist" aria-label="Choose a newsletter sample">
+            {sampleEditions.map(edition => <button key={edition.id} type="button" role="tab" id={`taste-tab-${edition.id}`} aria-controls="taste-panel" aria-selected={tasteId === edition.id} className={tasteId === edition.id ? 'active' : ''} onClick={() => setTasteId(edition.id)}>{edition.shortName}</button>)}
+          </div>
+          <article className={`taste-card ${themeForSample[taste.id]}`} id="taste-panel" role="tabpanel" aria-labelledby={`taste-tab-${taste.id}`}>
+            <p className="taste-meta"><span>{taste.name}</span><span>{taste.dateLabel}</span></p>
+            {taste.stories[0] && <SampleStoryBlock story={taste.stories[0]} index={0} total={taste.stories.length} />}
+            <div className="taste-footer">
+              <Button variant="editorial" size="lg" asChild><Link to="/sample/$id" params={{ id: taste.id }}>Read the full edition <ArrowRight /></Link></Button>
+              <p><Clock3 size={13} /> {taste.readMinutes} min. Two more stories{taste.desk ? `, ${taste.desk.label}` : ''}{taste.numbers ? ', Today’s Numbers' : ''} and In Plain English.</p>
+            </div>
+          </article>
+        </section>}
+
         <section id="pricing" className="site-wrap section">
           <div className="pricing-heading"><div className="eyebrow">CONTEXT IS A FLEX.</div><h2>Big “I actually know this” energy.</h2><p>Choose your subscription. Bring more than “yeah, totally” to the table.</p></div>
           <div className="pricing-grid">{plans.map(plan => <article key={plan.id} className={`price-card ${plan.featured ? 'featured' : ''}`}>
@@ -168,24 +188,6 @@ function Index() {
 
       <footer className="site-wrap footer"><Brand /><p>Less doomscroll. More dinner-table lore.</p><span>© {new Date().getUTCFullYear()} Weighted Average</span></footer>
 
-      <Dialog open={sample !== null} onOpenChange={open => { if (!open) setSample(null); }}>
-        <DialogContent className="max-w-xl max-sm:w-[calc(100%-32px)]">
-          <DialogTitle>Inside Weighted Average {sample}</DialogTitle>
-          <DialogDescription>A look at the edition. The story below is illustrative, not a live news report.</DialogDescription>
-          <div className="sample-paper">
-            <div className="sample-tag">THREE STORIES. NO INFORMATION OVERLOAD.</div>
-            {sample === 'Markets' ? <><h3>Beyond the red and green.</h3><p>Every edition opens with <strong>Today’s Numbers</strong>: six indicators at a glance. Then, three stories covering Indian markets, money flows, policy and the bigger picture.</p></> : sample === 'Business' ? <><h3>The story behind the strategy.</h3><p>One major move from the past week. One pattern across companies. One strategy that isn’t working. Plus <strong>The Leadership Desk</strong>, on a telling leadership change at a Nifty 50 company.</p></> : <><h3>What happens after the AI announcement?</h3><p>The biggest AI move of the week, a company putting AI to work, and a bet that’s struggling. Plus <strong>The AI Hire Watch</strong>, tracking who’s being brought in to lead AI at Indian companies.</p></>}
-            <div className="border-t border-border mt-5 pt-2"><h3>An illustrative story</h3>
-              <h4>What happened.</h4><p>{sample === 'Markets' ? 'Foreign investors sell Indian equities while domestic investors buy. The index barely moves.' : sample === 'Business' ? 'A company acquires a smaller rival to expand into a new region.' : 'A company begins using AI to handle routine customer-service queries.'}</p>
-              <h4>The second order.</h4><p>{sample === 'Markets' ? 'A flat index doesn’t mean nothing happened. Different groups of investors can offset each other, even when their reasons for trading are very different.' : sample === 'Business' ? 'Buying reach is only the first step. Integrating people, systems and customer relationships determines whether that reach becomes an advantage.' : 'The interesting question is not whether the company has AI. It’s whether the time saved on routine work translates into better service on difficult cases.'}</p>
-              <h4>The Weighted Average Question.</h4><p>{sample === 'Markets' ? '“If domestic buying is balancing foreign selling, what would make that balance change?”' : sample === 'Business' ? '“Is this acquisition about entering a market, or about making the existing business stronger?”' : '“What would we measure to know whether AI is actually improving service?”'}</p>
-              <h4>The Weighted Average Answer.</h4><p>{sample === 'Markets' ? '“The index is only part of the story. I’d look at who’s buying, who’s selling, and whether those flows are persistent.”' : sample === 'Business' ? '“The deal gets them into the room. The integration will tell us whether they can make it work.”' : '“Handling more queries is a start. I’d want to see resolution quality and what happens when a customer needs a person.”'}</p>
-              <h4>In Plain English: {sample === 'Markets' ? 'FII and DII' : sample === 'Business' ? 'Acquisition integration' : 'Human in the loop'}</h4><p>{sample === 'Markets' ? 'FIIs are institutional investors based outside India. DIIs are institutions based in India, such as mutual funds and insurers. Their buying and selling help explain where money is moving, even when the index looks quiet.' : sample === 'Business' ? 'Acquisition integration is the work of bringing two businesses together after a deal. It includes people, systems and operations. A signed deal does not mean that work is finished.' : 'Human in the loop means a person stays involved in an AI-assisted process. They might review decisions or handle exceptions. It helps keep judgement and accountability in the process.'}</p>
-            </div>
-          </div>
-          <Button variant="editorial" size="lg" onClick={() => { setSample(null); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }}>Find my newsletter <ArrowUpRight /></Button>
-        </DialogContent>
-      </Dialog>
       <Dialog open={selectedPlan !== null} onOpenChange={open => { if (!open) setSelectedPlan(null); }}><DialogContent className="max-sm:w-[calc(100%-32px)]"><DialogTitle>{selectedPlan?.name}</DialogTitle><DialogDescription>Your selected monthly newsletter plan.</DialogDescription><p className="text-4xl font-display font-semibold">₹{selectedPlan?.price}<span className="text-sm text-muted-foreground font-normal"> / month</span></p><ul className="grid gap-3 text-sm">{selectedPlan?.features.map(feature => <li className="flex items-center gap-2" key={feature}><Check size={16} />{feature}</li>)}</ul>{selectedPlan?.checkoutUrl ? <><p className="text-sm text-muted-foreground border-t pt-4">You’ll finish on Zoho Billing’s secure checkout page. Your subscription starts once payment goes through there.</p><Button variant="editorial" asChild><a href={selectedPlan.checkoutUrl} rel="noopener noreferrer">Continue to checkout <ArrowUpRight /></a></Button><Button variant="ghost" onClick={() => setSelectedPlan(null)}>Back to the newsletters</Button></> : <><p className="text-sm text-muted-foreground border-t pt-4">Checkout isn’t available yet. No subscription has been created and no payment has been taken.</p><Button variant="editorial" onClick={() => setSelectedPlan(null)}>Back to the newsletters <ArrowRight /></Button></>}</DialogContent></Dialog>
     </>
   );
