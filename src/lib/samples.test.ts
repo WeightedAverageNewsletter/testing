@@ -43,6 +43,16 @@ describe("Sample editions shown on the site", () => {
       expect(all(edition)).not.toMatch(banned);
   });
 
+  it("quotes each overheard line word for word from one of the edition's Answers", () => {
+    for (const edition of sampleEditions) {
+      expect(
+        edition.stories.some((story) =>
+          story.answer.startsWith(edition.overheard),
+        ),
+      ).toBe(true);
+    }
+  });
+
   it("carries the agreed editorial fixes", () => {
     const markets = all(sampleEditions[0]!);
     expect(markets).not.toContain("still below the 4% target");

@@ -30,6 +30,8 @@ export type SampleEdition = {
   dateLabel: string;
   cadence: string;
   readMinutes: number;
+  /** Opening line of one of this edition's Answers, word for word. Shown on the homepage front page. */
+  overheard: string;
   numbers: SampleNumber[] | null;
   stories: SampleStory[];
   desk: SampleDesk | null;
@@ -125,6 +127,7 @@ export const sampleEditions: SampleEdition[] = [
       ],
     },
     readMinutes: 6,
+    overheard: "Yeah, and the speed of the reversal is striking.",
   },
   {
     id: "business",
@@ -184,6 +187,7 @@ export const sampleEditions: SampleEdition[] = [
       ],
     },
     readMinutes: 7,
+    overheard: "Yeah, and the re-delivery detail is the most damning one.",
   },
   {
     id: "ai",
@@ -245,6 +249,7 @@ export const sampleEditions: SampleEdition[] = [
       ],
     },
     readMinutes: 6,
+    overheard: "Honestly, the Sarvam angle is what I keep coming back to.",
   },
 ];
 

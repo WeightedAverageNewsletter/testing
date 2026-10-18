@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { newsletters, plans } from "@/lib/newsletters";
 import { sampleEditions, type SampleEdition } from "@/lib/samples";
 import { Brand, logoUrl } from "@/components/brand";
-import { SampleStoryBlock } from "@/components/sample-story";
 import heroImage from "@/assets/awkward_meeting_hero.jpg";
 
 export const Route = createFileRoute("/")({
@@ -41,8 +40,6 @@ function Index() {
   const [meetingTopic, setMeetingTopic] = useState(0);
   const [hasRead, setHasRead] = useState(false);
   const meeting = meetingLines[meetingTopic] ?? meetingLines[0];
-  const [tasteId, setTasteId] = useState<SampleEdition['id']>('markets');
-  const taste = sampleEditions.find(edition => edition.id === tasteId) ?? sampleEditions[0];
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[number] | null>(null);
   return (
     <>
@@ -153,23 +150,22 @@ function Index() {
           </div>
         </section>
 
-        {taste && <section id="sample" className="site-wrap section sample-taste" aria-labelledby="sample-title">
+        <section id="sample" className="site-wrap section front-pages" aria-labelledby="sample-title">
           <div className="section-heading">
-            <div><div className="eyebrow">STRAIGHT FROM THE ARCHIVE.</div><h2 id="sample-title">Don’t take our word for it.<br />Read one.</h2></div>
-            <p>A real story from a past edition, exactly as subscribers got it. Pick a newsletter.</p>
+            <div><div className="eyebrow">STRAIGHT FROM THE ARCHIVE.</div><h2 id="sample-title">Judge us by our<br />front pages.</h2></div>
+            <p>Real past editions. Pick one and read the whole thing.</p>
           </div>
-          <div className="taste-tabs" role="tablist" aria-label="Choose a newsletter sample">
-            {sampleEditions.map(edition => <button key={edition.id} type="button" role="tab" id={`taste-tab-${edition.id}`} aria-controls="taste-panel" aria-selected={tasteId === edition.id} className={tasteId === edition.id ? 'active' : ''} onClick={() => setTasteId(edition.id)}>{edition.shortName}</button>)}
+          <div className="front-grid">
+            {sampleEditions.map(edition => (
+              <Link key={edition.id} to="/sample/$id" params={{ id: edition.id }} className={`front-page ${themeForSample[edition.id]}`} aria-label={`Read the full ${edition.name} edition from ${edition.dateLabel}`}>
+                <span className="front-band"><span className="front-name">{edition.shortName}</span><span className="front-date">{edition.dateLabel}</span></span>
+                <ol className="front-headlines">{edition.stories.map(story => <li key={story.headline}>{story.headline}</li>)}</ol>
+                <span className="front-overheard"><span className="front-overheard-tag">Overheard in this edition</span>“{edition.overheard}”</span>
+                <span className="front-go">Read the full edition <ArrowRight size={15} /></span>
+              </Link>
+            ))}
           </div>
-          <article className={`taste-card ${themeForSample[taste.id]}`} id="taste-panel" role="tabpanel" aria-labelledby={`taste-tab-${taste.id}`}>
-            <p className="taste-meta"><span>{taste.name}</span><span>{taste.dateLabel}</span></p>
-            {taste.stories[0] && <SampleStoryBlock story={taste.stories[0]} index={0} total={taste.stories.length} />}
-            <div className="taste-footer">
-              <Button variant="editorial" size="lg" asChild><Link to="/sample/$id" params={{ id: taste.id }}>Read the full edition <ArrowRight /></Link></Button>
-              <p><Clock3 size={13} /> {taste.readMinutes} min. Two more stories{taste.desk ? `, ${taste.desk.label}` : ''}{taste.numbers ? ', Today’s Numbers' : ''} and In Plain English.</p>
-            </div>
-          </article>
-        </section>}
+        </section>
 
         <section id="pricing" className="site-wrap section">
           <div className="pricing-heading"><div className="eyebrow">CONTEXT IS A FLEX.</div><h2>Big “I actually know this” energy.</h2><p>Choose your subscription. Bring more than “yeah, totally” to the table.</p></div>
