@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowUpRight, ArrowRight, TrendingUp, BriefcaseBusiness, Sparkles, Clock3, Check, Plus, MoveUpRight, AudioLines, BookOpen } from "lucide-react";
+import { ArrowUpRight, ArrowRight, TrendingUp, BriefcaseBusiness, Sparkles, Clock3, Check, Plus, MoveUpRight, AudioLines, BookOpen, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { newsletters, plans } from "@/lib/newsletters";
@@ -38,7 +38,6 @@ const steps = [
 
 function Index() {
   const [meetingTopic, setMeetingTopic] = useState(0);
-  const [hasRead, setHasRead] = useState(false);
   const meeting = meetingLines[meetingTopic] ?? meetingLines[0];
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[number] | null>(null);
   return (
@@ -62,7 +61,7 @@ function Index() {
             <div className="eyebrow"><span className="status-dot" /> <span>THREE MORNING NEWSLETTERS<span className="hidden sm:inline">&nbsp;· MARKETS, BUSINESS, AI</span></span></div>
             <h1 id="hero-heading"><span>Weighted</span><span>Average<span className="!inline text-primary">.</span></span></h1>
             <p className="hero-tagline">Cut through the noise. Have a take.</p>
-            <p className="hero-description">Boss drops “FII outflows” into the meeting.<br className="hidden md:block" /> The room goes on mute. Not you.<br /><span className="hero-pitch">Most newsletters tell you what happened. We tell you what to do with it.</span></p>
+            <p className="hero-description">Most newsletters tell you what happened. We tell you what to do with it.</p>
             <div className="hero-actions">
               <Button variant="editorial" size="lg" asChild><a href="#pricing">Get it in my inbox <ArrowUpRight /></a></Button>
               <Button variant="editorialOutline" size="lg" asChild><a href="#sample">Read a sample edition <ArrowRight /></a></Button>
@@ -128,23 +127,25 @@ function Index() {
           </div>
         </section>
 
-        <section id="how-it-works" className="how-section section">
+        <section id="how-it-works" className="how-section section" aria-labelledby="how-title">
           <div className="site-wrap how-layout">
             <div className="how-intro">
-              <div className="eyebrow"><AudioLines size={15} /> THE MEETING COULD HAVE BEEN AN EMAIL.</div>
-              <h2>Your boss has a question.<br />You have… a pulse?</h2>
-              <p>The boss mentions a market move. Twelve people nod. One person says “interesting”. Nobody knows what’s interesting.</p>
-              <p className="mt-4">Let’s retire the nod. Here’s what a little context can do. These exchanges are illustrative; the awkwardness is universal.</p>
+              <div className="eyebrow"><AudioLines size={15} /> THE MEETING, BEFORE AND AFTER.</div>
+              <h2 id="how-title">Boss drops “FII outflows” into the meeting.</h2>
+              <p className="how-punch">The room goes on mute. <mark>Not you.</mark></p>
               <div className="meeting-demo">
                 <div className="meeting-tabs" role="group" aria-label="Choose a meeting topic">{meetingLines.map((line, index) => <Button key={line.topic} variant="ghost" aria-pressed={meetingTopic === index} onClick={() => setMeetingTopic(index)}>{line.topic}</Button>)}</div>
-                <p className="boss-line">{meeting.boss}</p>
-                <div className={`your-reply ${hasRead ? 'informed' : ''}`}><span>{hasRead ? 'YOU, AFTER WEIGHTED AVERAGE' : 'YOU, RUNNING ON VIBES'}</span><p>{hasRead ? meeting.after : meeting.before}</p></div>
-                <Button variant="editorial" onClick={() => setHasRead(value => !value)}>{hasRead ? 'Back to winging it' : 'Okay, give me the context'} <Sparkles /></Button>
+                <div className="meeting-thread" aria-live="polite">
+                  <div className="meet-bubble meet-boss"><span className="meet-who">The boss</span><p>{meeting.boss}</p></div>
+                  <div className="meet-bubble meet-room"><span className="meet-who"><MicOff size={12} /> The room, running on vibes</span><p>{meeting.before}</p></div>
+                  <div className="meet-bubble meet-you"><span className="meet-who"><Sparkles size={12} /> You, after Weighted Average</span><p>{meeting.after}</p></div>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="eyebrow mb-7">THREE STORIES. FOUR WAYS TO GET IT.</p>
-              <div className="story-steps">{steps.map((step, index) => <div className="story-step" key={step.title}><span className="step-number">0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></div>)}</div>
+            <div className="how-format">
+              <div className="eyebrow">HOW EVERY EDITION WORKS.</div>
+              <h3 className="how-format-title">Three stories a morning.<br />Each one ends with your line.</h3>
+              <ol className="story-steps">{steps.map((step, index) => <li className={`story-step ${index === 2 ? 'is-line is-question' : index === 3 ? 'is-line is-answer' : ''}`} key={step.title}><span className="step-number">0{index + 1}</span><div className="step-copy"><h4>{step.title}</h4><p>{step.text}</p></div></li>)}</ol>
               <p className="plain-english"><strong className="text-foreground">And finally, In Plain English.</strong> A three-sentence explainer of the one concept from that day most likely to trip you up. Because “I’ll Google it later” is how we got here.</p>
             </div>
           </div>
